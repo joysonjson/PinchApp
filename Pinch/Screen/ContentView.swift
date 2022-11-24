@@ -13,7 +13,8 @@ struct ContentView: View {
     @State private var imageScale: CGFloat = 1
     @State private var imageOffset: CGSize = .zero
     @State private var isDraweOpen: Bool = false
-    
+    @State private var pageIndex: Int = 0
+    let pages: [Page] = pagesData
     //MARK: - RESET FUNCTION
     func resetImageState(){
         return  withAnimation(.spring()){
@@ -25,7 +26,7 @@ struct ContentView: View {
         NavigationView {
             ZStack {
                 Color.clear
-                Image("magazine-front-cover")
+                Image(pages[pageIndex].imageName)
                     .resizable()
                     .aspectRatio(contentMode: .fit)
                     .cornerRadius(10)
@@ -154,7 +155,20 @@ struct ContentView: View {
                                 isDraweOpen.toggle()
                             }
                         }
-                    
+                    ForEach(pages) { item in
+                        Image(item.thumbailName)
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width:80)
+                            .cornerRadius(8)
+                            .shadow(radius: 4)
+                            .opacity(isDraweOpen ? 1 : 0)
+                            .animation(.easeOut(duration: 0.5),value: isDraweOpen)
+                            .onTapGesture {
+                                isAnimating = true
+                                pageIndex = item.id - 1
+                            }
+                    }
                     Spacer()
                 }
                     .padding(EdgeInsets(top: 16, leading: 8, bottom: 16, trailing: 8))
